@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DocGen</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-file-alt"></i>
+                    <h1>DocGen</h1>
+                </div>
+                <p class="tagline">Gerador inteligente de documentação para apps e websites</p>
+            </div>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="container">
+            <div class="document-type-selector">
+                <h2>Selecione o tipo de documento</h2>
+                <div class="type-options">
+                    <button class="type-btn active" data-document="project">
+                        <i class="fas fa-project-diagram"></i>
+                        <span>Projeto</span>
+                    </button>
+                    <button class="type-btn" data-document="authorization">
+                        <i class="fas fa-file-contract"></i>
+                        <span>Carta de Autorização</span>
+                    </button>
+                    <button class="type-btn" data-document="standards">
+                        <i class="fas fa-clipboard-list"></i>
+                        <span>Normas de Documentação</span>
+                    </button>
+                    <button class="type-btn" data-document="enterprise">
+                        <i class="fas fa-building"></i>
+                        <span>Documentação Empresarial</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="wizard-container" id="projectWizard">
+                <div class="wizard-header">
+                    <h2>Vamos criar sua documentação</h2>
+                    <p>Responda algumas perguntas e nós geraremos uma documentação completa e profissional</p>
+                </div>
+
+                <div class="project-type-selector">
+                    <h3>Que tipo de projeto você quer documentar?</h3>
+                    <div class="type-options">
+                        <button class="type-btn active" data-type="mobile">
+                            <i class="fas fa-mobile-alt"></i>
+                            <span>Aplicativo Móvel</span>
+                        </button>
+                        <button class="type-btn" data-type="web">
+                            <i class="fas fa-globe"></i>
+                            <span>Website</span>
+                        </button>
+                        <button class="type-btn" data-type="website-app">
+                            <i class="fas fa-laptop-code"></i>
+                            <span>Software</span>
+                        </button>
+                        <button class="type-btn" data-type="both">
+                            <i class="fas fa-laptop-mobile"></i>
+                            <span>Ambos</span>
+                        </button>
+                    </div>
+                </div>
+
+                <form id="documentationForm" class="documentation-form">
+                    <div class="form-section" id="basicInfo">
+                        <h3><i class="fas fa-info-circle"></i> Informações Básicas</h3>
+                        <div class="form-group">
+                            <label for="projectName">Nome do Projeto *</label>
+                            <input type="text" id="projectName" name="projectName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="projectDescription">Descrição Breve *</label>
+                            <textarea id="projectDescription" name="projectDescription" rows="3" required 
+                                placeholder="Descreva em poucas palavras o que seu projeto faz"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="version">Versão</label>
+                            <input type="text" id="version" name="version" placeholder="1.0.0">
+                        </div>
+                    </div>
+
+                    <div class="form-section" id="features">
+                        <h3><i class="fas fa-star"></i> Funcionalidades Principais</h3>
+                        <div class="form-group">
+                            <label>Quais são as principais funcionalidades do seu projeto? *</label>
+                            <div class="features-list">
+                                <div class="feature-item">
+                                    <input type="text" name="features[]" placeholder="Ex: Login de usuários" required>
+                                    <button type="button" class="remove-feature" style="display: none;">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <button type="button" class="add-feature-btn">
+                                <i class="fas fa-plus"></i> Adicionar Funcionalidade
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-section" id="targetAudience">
+                        <h3><i class="fas fa-users"></i> Público-Alvo</h3>
+                        <div class="form-group">
+                            <label for="targetAudience">Quem é o público-alvo do seu projeto? *</label>
+                            <textarea id="targetAudience" name="targetAudience" rows="3" required
+                                placeholder="Ex: Usuários finais, desenvolvedores, administradores de sistema"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-section" id="technicalInfo">
+                        <h3><i class="fas fa-code"></i> Informações Técnicas</h3>
+                        <div class="form-group">
+                            <label for="technologies">Tecnologias Utilizadas</label>
+                            <input type="text" id="technologies" name="technologies" 
+                                placeholder="Ex: React Native, Node.js, MongoDB">
+                        </div>
+                        <div class="form-group">
+                            <label for="platforms">Plataformas Suportadas</label>
+                            <div class="checkbox-group">
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="platforms" value="ios">
+                                    <span>iOS</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="platforms" value="android">
+                                    <span>Android</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="platforms" value="web">
+                                    <span>Web</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="platforms" value="desktop">
+                                    <span>Desktop</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section" id="installation">
+                        <h3><i class="fas fa-download"></i> Instalação e Configuração</h3>
+                        <div class="form-group">
+                            <label for="installationSteps">Passos para Instalação</label>
+                            <textarea id="installationSteps" name="installationSteps" rows="5"
+                                placeholder="Descreva os passos necessários para instalar e configurar o projeto"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="requirements">Requisitos do Sistema</label>
+                            <textarea id="requirements" name="requirements" rows="3"
+                                placeholder="Ex: Node.js 16+, Android Studio, Xcode"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-section" id="websiteAppFeatures">
+                        <h3><i class="fas fa-laptop-code"></i> Funcionalidades do Aplicativo de Website</h3>
+                        <div class="form-group">
+                            <label for="webTechnologies">Tecnologias Web *</label>
+                            <textarea id="webTechnologies" name="webTechnologies" rows="3" required
+                                placeholder="Ex: React, Vue.js, Angular, HTML5, CSS3, JavaScript ES6+"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="frameworks">Frameworks e Bibliotecas</label>
+                            <textarea id="frameworks" name="frameworks" rows="3"
+                                placeholder="Ex: Bootstrap, Tailwind CSS, jQuery, Axios, Redux"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="database">Banco de Dados</label>
+                            <input type="text" id="database" name="database" 
+                                placeholder="Ex: MySQL, PostgreSQL, MongoDB, Firebase">
+                        </div>
+                        <div class="form-group">
+                            <label for="hosting">Hospedagem e Deploy</label>
+                            <textarea id="hosting" name="hosting" rows="3"
+                                placeholder="Ex: Vercel, Netlify, AWS, Heroku, GitHub Pages"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-section" id="userInterface">
+                        <h3><i class="fas fa-palette"></i> Interface do Usuário</h3>
+                        <div class="form-group">
+                            <label for="designSystem">Sistema de Design</label>
+                            <textarea id="designSystem" name="designSystem" rows="3"
+                                placeholder="Descreva o sistema de design, cores, tipografia, componentes"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="responsiveDesign">Design Responsivo</label>
+                            <textarea id="responsiveDesign" name="responsiveDesign" rows="3"
+                                placeholder="Breakpoints, layouts adaptativos, mobile-first approach"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="accessibility">Acessibilidade</label>
+                            <textarea id="accessibility" name="accessibility" rows="3"
+                                placeholder="WCAG 2.1, ARIA, screen readers, navegação por teclado"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="browsers">Navegadores Suportados</label>
+                            <input type="text" id="browsers" name="browsers" 
+                                placeholder="Ex: Chrome 90+, Firefox 88+, Safari 14+, Edge 90+">
+                        </div>
+                    </div>
+
+                    <div class="form-section" id="performance">
+                        <h3><i class="fas fa-tachometer-alt"></i> Performance e Otimização</h3>
+                        <div class="form-group">
+                            <label for="optimization">Técnicas de Otimização</label>
+                            <textarea id="optimization" name="optimization" rows="3"
+                                placeholder="Lazy loading, code splitting, minificação, cache, CDN"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="performanceMetrics">Métricas de Performance</label>
+                            <textarea id="performanceMetrics" name="performanceMetrics" rows="3"
+                                placeholder="Core Web Vitals, Lighthouse scores, tempo de carregamento"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="seo">SEO (Otimização para Motores de Busca)</label>
+                            <textarea id="seo" name="seo" rows="3"
+                                placeholder="Meta tags, structured data, sitemap, robots.txt</textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-section" id="security">
+                        <h3><i class="fas fa-shield-alt"></i> Segurança</h3>
+                        <div class="form-group">
+                            <label for="authentication">Autenticação e Autorização</label>
+                            <textarea id="authentication" name="authentication" rows="3"
+                                placeholder="JWT, OAuth 2.0, SSO, RBAC, sessões seguras"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="dataProtection">Proteção de Dados</label>
+                            <textarea id="dataProtection" name="dataProtection" rows="3"
+                                placeholder="HTTPS, CORS, CSP, XSS prevention, sanitização de inputs"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="compliance">Conformidade e Compliance</label>
+                            <textarea id="compliance" name="compliance" rows="3"
+                                placeholder="LGPD, CCPA, GDPR, políticas de privacidade"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-section" id="apiIntegration">
+                        <h3><i class="fas fa-plug"></i> Integrações e APIs</h3>
+                        <div class="form-group">
+                            <label for="externalApis">APIs Externas</label>
+                            <textarea id="externalApis" name="externalApis" rows="3"
+                                placeholder="Google Maps API, Stripe, Facebook SDK, Google Analytics"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="webhooks">Webhooks</label>
+                            <textarea id="webhooks" name="webhooks" rows="3"
+                                placeholder="Eventos, payloads, autenticação, retry policies"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="thirdParty">Integrações de Terceiros</label>
+                            <textarea id="thirdParty" name="thirdParty" rows="3"
+                                placeholder="Analytics, chat, pagamento, redes sociais"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-section" id="testing">
+                        <h3><i class="fas fa-vial"></i> Testes e Qualidade</h3>
+                        <div class="form-group">
+                            <label for="testingTypes">Tipos de Teste</label>
+                            <textarea id="testingTypes" name="testingTypes" rows="3"
+                                placeholder="Unit tests, integration tests, E2E tests, testes visuais"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="testingTools">Ferramentas de Teste</label>
+                            <textarea id="testingTools" name="testingTools" rows="3"
+                                placeholder="Jest, Cypress, Playwright, Selenium, Storybook"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="cicd">CI/CD Pipeline</label>
+                            <textarea id="cicd" name="cicd" rows="3"
+                                placeholder="GitHub Actions, GitLab CI, Jenkins, testes automatizados, deploy automático"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-section" id="maintenance">
+                        <h3><i class="fas fa-tools"></i> Manutenção e Monitoramento</h3>
+                        <div class="form-group">
+                            <label for="monitoring">Monitoramento e Logging</label>
+                            <textarea id="monitoring" name="monitoring" rows="3"
+                                placeholder="Sentry, LogRocket, Google Analytics, console errors, uptime monitoring"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="backupStrategy">Estratégia de Backup</label>
+                            <textarea id="backupStrategy" name="backupStrategy" rows="3"
+                                placeholder="Backups automáticos, retenção, disaster recovery, rollback procedures"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="updateProcess">Processo de Atualização</label>
+                            <textarea id="updateProcess" name="updateProcess" rows="3"
+                                placeholder="Versionamento, hotfixes, manutenção programada, comunicação de mudanças"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-section" id="usage">
+                        <h3><i class="fas fa-play"></i> Como Usar</h3>
+                        <div class="form-group">
+                            <label for="usageInstructions">Instruções de Uso</label>
+                            <textarea id="usageInstructions" name="usageInstructions" rows="5"
+                                placeholder="Explique como usar as principais funcionalidades do projeto"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-section" id="api">
+                        <h3><i class="fas fa-plug"></i> API (se aplicável)</h3>
+                        <div class="form-group">
+                            <label for="apiEndpoints">Endpoints Principais</label>
+                            <textarea id="apiEndpoints" name="apiEndpoints" rows="5"
+                                placeholder="Liste os principais endpoints da API com métodos HTTP"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-section" id="deployment">
+                        <h3><i class="fas fa-rocket"></i> Deploy e Publicação</h3>
+                        <div class="form-group">
+                            <label for="deploymentSteps">Passos para Deploy</label>
+                            <textarea id="deploymentSteps" name="deploymentSteps" rows="5"
+                                placeholder="Como fazer o deploy do projeto em produção"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-section" id="teamMembers">
+                        <h3><i class="fas fa-users"></i> Membros do Projeto</h3>
+                        <div class="form-group">
+                            <label>Adicione os membros do projeto:</label>
+                            <div class="team-list">
+                                <div class="team-item">
+                                    <input type="text" name="memberName[]" placeholder="Nome" required>
+                                    <input type="text" name="memberRole[]" placeholder="Função" required>
+                                    <input type="email" name="memberEmail[]" placeholder="E-mail" required>
+                                    <button type="button" class="remove-member" style="display: none;">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <button type="button" class="add-member-btn">
+                                <i class="fas fa-plus"></i> Adicionar Membro
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-section" id="teamReports">
+                        <h3><i class="fas fa-user-chart"></i> Relatórios Individuais da Equipe</h3>
+                        <div class="form-group">
+                            <label>Adicione os relatórios individuais dos integrantes</label>
+                            <div class="team-reports-list">
+                                <div class="team-report-item">
+                                    <div class="report-header">
+                                        <input type="text" name="memberName[]" placeholder="Nome do Integrante" class="member-name">
+                                        <button type="button" class="remove-report" style="display: none;">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                    <div class="report-content">
+                                        <div class="form-group">
+                                            <label>Período do Relatório</label>
+                                            <div class="period-inputs">
+                                                <input type="date" name="reportStartDate[]" class="report-start-date">
+                                                <span>até</span>
+                                                <input type="date" name="reportEndDate[]" class="report-end-date">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Tarefas Realizadas</label>
+                                            <textarea name="tasksDone[]" rows="3" placeholder="Descreva as tarefas completadas e tempo investido"></textarea>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Desafios Encontrados</label>
+                                            <textarea name="challenges[]" rows="2" placeholder="Obstáculos e como foram superados"></textarea>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Aprendizados</label>
+                                            <textarea name="learnings[]" rows="2" placeholder="Conhecimentos adquiridos"></textarea>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Próximos Passos</label>
+                                            <textarea name="nextSteps[]" rows="2" placeholder="Planejamento das próximas atividades"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="button" class="add-report-btn">
+                                <i class="fas fa-plus"></i> Adicionar Relatório Individual
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-section" id="collectiveReports">
+                        <h3><i class="fas fa-users-cog"></i> Relatório Coletivo do Projeto</h3>
+                        <div class="form-group">
+                            <label>Informações do Relatório Coletivo</label>
+                            <div class="collective-report-content">
+                                <div class="form-group">
+                                    <label>Período do Relatório Coletivo</label>
+                                    <div class="period-inputs">
+                                        <input type="date" id="collectiveStartDate" name="collectiveStartDate">
+                                        <span>até</span>
+                                        <input type="date" id="collectiveEndDate" name="collectiveEndDate">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="executiveSummary">Resumo Executivo</label>
+                                    <textarea id="executiveSummary" name="executiveSummary" rows="3" 
+                                        placeholder="Objetivos do período, principais conquistas e desafios superados pela equipe"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="projectMetrics">Métricas do Projeto</label>
+                                    <textarea id="projectMetrics" name="projectMetrics" rows="3" 
+                                        placeholder="Total de horas investidas, features completadas, bugs resolvidos, testes criados"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="featuresStatus">Status das Funcionalidades</label>
+                                    <textarea id="featuresStatus" name="featuresStatus" rows="3" 
+                                        placeholder="Liste as funcionalidades com seus respectivos percentuais de conclusão"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="nextObjectives">Próximos Objetivos</label>
+                                    <textarea id="nextObjectives" name="nextObjectives" rows="3" 
+                                        placeholder="Próximos objetivos com responsáveis"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="lessonsLearned">Lições Aprendidas</label>
+                                    <textarea id="lessonsLearned" name="lessonsLearned" rows="2" 
+                                        placeholder="Principais lições aprendidas pela equipe"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section" id="images">
+                        <h3><i class="fas fa-images"></i> Imagens do Projeto</h3>
+                        <div class="form-group">
+                            <label>Adicione imagens para ilustrar sua documentação</label>
+                            <div class="image-upload-container">
+                                <div class="upload-area" id="uploadArea">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    <h4>Arraste e solte imagens aqui</h4>
+                                    <p>ou clique para selecionar</p>
+                                    <input type="file" id="imageInput" multiple accept="image/*" style="display: none;">
+                                </div>
+                                <div class="uploaded-images" id="uploadedImages">
+                                    <!-- Imagens serão adicionadas aqui dinamicamente -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section" id="contact">
+                        <h3><i class="fas fa-envelope"></i> Contato e Suporte</h3>
+                        <div class="form-group">
+                            <label for="contactInfo">Informações de Contato</label>
+                            <input type="text" id="contactInfo" name="contactInfo" 
+                                placeholder="Email, telefone ou link para suporte">
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-magic"></i> Gerar Documentação
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="wizard-container" id="authorizationWizard" style="display: none;">
+                <div class="wizard-header">
+                    <h2>Criar Carta de Autorização</h2>
+                    <p>Preencha os dados para gerar uma carta de autorização profissional</p>
+                </div>
+
+                <form id="authorizationForm" class="authorization-form">
+                    <div class="form-section">
+                        <h3><i class="fas fa-user-tie"></i> Dados do Responsável</h3>
+                        <div class="form-group">
+                            <label for="responsible-name">Nome do Responsável *</label>
+                            <input type="text" id="responsible-name" name="responsible-name" required 
+                                placeholder="Digite o nome completo do responsável">
+                        </div>
+                        <div class="form-group">
+                            <label for="responsible-position">Cargo Ocupado *</label>
+                            <input type="text" id="responsible-position" name="responsible-position" required 
+                                placeholder="Ex: Diretor, Gerente, Coordenador">
+                        </div>
+                        <div class="form-group">
+                            <label for="company-name">Nome da Empresa/Organização *</label>
+                            <input type="text" id="company-name" name="company-name" required 
+                                placeholder="Nome da empresa, organização, escola, etc">
+                        </div>
+                        <div class="form-group">
+                            <label for="company-address">Endereço Completo *</label>
+                            <input type="text" id="company-address" name="company-address" required 
+                                placeholder="Rua, número, bairro, cidade, estado, CEP">
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3><i class="fas fa-tasks"></i> Atividades Acadêmicas</h3>
+                        <div class="form-group">
+                            <label for="activities-description">Descrição das Atividades *</label>
+                            <textarea id="activities-description" name="activities-description" rows="6" required 
+                                placeholder="Descreva detalhadamente as atividades acadêmicas extensionistas que serão realizadas..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3><i class="fas fa-users"></i> Alunos Autorizados</h3>
+                        <div class="form-group">
+                            <label>Lista de Alunos</label>
+                            <div class="students-list">
+                                <div class="student-item header">
+                                    <span>Nome do Aluno</span>
+                                    <span>Curso</span>
+                                    <span>Ações</span>
+                                </div>
+                                <div class="student-item">
+                                    <input type="text" name="student-name[]" class="student-name" placeholder="Nome completo do aluno">
+                                    <input type="text" name="student-course[]" class="student-course" placeholder="Nome do curso">
+                                    <button type="button" class="remove-student" style="display: none;">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <button type="button" class="add-student-btn">
+                                <i class="fas fa-plus"></i> Adicionar Aluno
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3><i class="fas fa-check-circle"></i> Termos de Autorização</h3>
+                        <div class="authorization-text">
+                            <p>Declaro que fui informado por meio da Carta de Apresentação sobre as características e objetivos das atividades que serão realizadas na organização a qual represento e afirmo estar ciente de tratar-se de uma atividade realizada com intuito exclusivo de ensino de alunos de graduação, sem a finalidade de exercício profissional.</p>
+                            <p>Desta forma, autorizo:</p>
+                        </div>
+                        <div class="form-group checkbox-group">
+                            <label>
+                                <input type="checkbox" id="auth-access-data" name="authorizations[]" value="access-data">
+                                O acesso a informações e dados que forem necessários à execução da atividade
+                            </label>
+                            <label>
+                                <input type="checkbox" id="auth-image-record" name="authorizations[]" value="image-record">
+                                O registro de imagem por meio de fotografias
+                            </label>
+                            <label class="other-auth-label">
+                                <input type="checkbox" id="auth-other" name="authorizations[]" value="other">
+                                Outro:
+                                <input type="text" id="auth-other-specify" name="auth-other-specify" 
+                                    placeholder="Especifique aqui" disabled>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3><i class="fas fa-calendar-alt"></i> Data e Local</h3>
+                        <div class="form-group date-group">
+                            <label for="letter-local">Local *</label>
+                            <input type="text" id="letter-local" name="letter-local" required 
+                                placeholder="Ex: São Paulo, Rio de Janeiro, etc">
+                        </div>
+                        <div class="form-group date-group">
+                            <label>Data *</label>
+                            <div class="date-inputs">
+                                <input type="number" id="letter-day" name="letter-day" min="1" max="31" required placeholder="Dia">
+                                <span>de</span>
+                                <select id="letter-month" name="letter-month" required>
+                                    <option value="">Mês</option>
+                                    <option value="janeiro">janeiro</option>
+                                    <option value="fevereiro">fevereiro</option>
+                                    <option value="março">março</option>
+                                    <option value="abril">abril</option>
+                                    <option value="maio">maio</option>
+                                    <option value="junho">junho</option>
+                                    <option value="julho">julho</option>
+                                    <option value="agosto">agosto</option>
+                                    <option value="setembro">setembro</option>
+                                    <option value="outubro">outubro</option>
+                                    <option value="novembro">novembro</option>
+                                    <option value="dezembro">dezembro</option>
+                                </select>
+                                <span>de</span>
+                                <input type="number" id="letter-year" name="letter-year" min="2020" max="2030" required placeholder="Ano">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-file-signature"></i> Gerar Carta de Autorização
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="wizard-container" id="standardsWizard" style="display: none;">
+                <div class="wizard-header">
+                    <h2>Criar Documentação Seguindo Normas</h2>
+                    <p>Gerar documentação completa seguindo padrões de qualidade para projetos de software</p>
+                </div>
+
+                <form id="standardsForm" class="standards-form">
+                    <div class="form-section">
+                        <h3><i class="fas fa-paint-brush"></i> 1. Documentação de Design (UI/UX)</h3>
+                        <div class="form-group">
+                            <label for="user-flows">User Flows</label>
+                            <textarea id="user-flows" name="user-flows" rows="4" 
+                                placeholder="Descreva os diagramas do caminho do usuário..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="style-guide">Style Guide</label>
+                            <textarea id="style-guide" name="style-guide" rows="4" 
+                                placeholder="Descreva cores, tipografia e componentes (Figma)..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3><i class="fas fa-sitemap"></i> 2. Arquitetura de Sistema</h3>
+                        <div class="form-group">
+                            <label for="architecture-diagram">Diagrama de Arquitetura</label>
+                            <textarea id="architecture-diagram" name="architecture-diagram" rows="4" 
+                                placeholder="Descreva o fluxo entre Frontend, Backend e Base de Dados..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="data-dictionary">Dicionário de Dados (DER)</label>
+                            <textarea id="data-dictionary" name="data-dictionary" rows="4" 
+                                placeholder="Definição de tabelas, campos e relacionamentos..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="api-documentation">Documentação de API</label>
+                            <textarea id="api-documentation" name="api-documentation" rows="4" 
+                                placeholder="Padrão OpenAPI/Swagger para rotas e métodos..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3><i class="fas fa-code"></i> 3. Documentação de Código</h3>
+                        <div class="form-group">
+                            <label for="readme-content">README.md</label>
+                            <textarea id="readme-content" name="readme-content" rows="4" 
+                                placeholder="Guia de instalação, pré-requisitos e variáveis de ambiente..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="technical-comments">Comentários Técnicos</label>
+                            <textarea id="technical-comments" name="technical-comments" rows="4" 
+                                placeholder="Uso de JSDoc ou Docstrings para funções complexas..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="changelog">Changelog</label>
+                            <textarea id="changelog" name="changelog" rows="4" 
+                                placeholder="Registo de versões (Semantic Versioning)..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3><i class="fas fa-tasks"></i> 4. Gestão e Negócio (Agile)</h3>
+                        <div class="form-group">
+                            <label for="user-stories">User Stories</label>
+                            <textarea id="user-stories" name="user-stories" rows="4" 
+                                placeholder="Descrição de funcionalidades sob a ótica do utilizador..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="acceptance-criteria">Critérios de Aceite</label>
+                            <textarea id="acceptance-criteria" name="acceptance-criteria" rows="4" 
+                                placeholder="Regras para validação de tarefas..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3><i class="fas fa-shield-alt"></i> 5. Infraestrutura e Segurança</h3>
+                        <div class="form-group">
+                            <label for="cors-auth">Políticas de CORS e Autenticação</label>
+                            <textarea id="cors-auth" name="cors-auth" rows="4" 
+                                placeholder="JWT/OAuth2 e configurações de CORS..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="disaster-recovery">Plano de Recuperação de Desastres</label>
+                            <textarea id="disaster-recovery" name="disaster-recovery" rows="4" 
+                                placeholder="Estratégias de backup e recuperação..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-book"></i> Gerar Documentação Padrão
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="wizard-container" id="enterpriseWizard" style="display: none;">
+                <div class="wizard-header">
+                    <h2>Documentação Empresarial</h2>
+                    <p>Crie documentação profissional para sua empresa com assinaturas digitais</p>
+                </div>
+
+                <form id="enterpriseForm" class="enterprise-form">
+                    <div class="form-section" id="companyInfo">
+                        <h3><i class="fas fa-building"></i> Informações da Empresa</h3>
+                        <div class="form-group">
+                            <label for="companyName">Nome da Empresa *</label>
+                            <input type="text" id="companyName" name="companyName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="companyCNPJ">CNPJ *</label>
+                            <input type="text" id="companyCNPJ" name="companyCNPJ" required placeholder="00.000.000/0001-00">
+                        </div>
+                        <div class="form-group">
+                            <label for="companyAddress">Endereço *</label>
+                            <input type="text" id="companyAddress" name="companyAddress" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="companyPhone">Telefone</label>
+                            <input type="tel" id="companyPhone" name="companyPhone" placeholder="(00) 0000-0000">
+                        </div>
+                        <div class="form-group">
+                            <label for="companyEmail">E-mail *</label>
+                            <input type="email" id="companyEmail" name="companyEmail" required>
+                        </div>
+                    </div>
+
+                    <div class="form-section" id="documentVersion">
+                        <h3><i class="fas fa-code-branch"></i> Versões do Documento</h3>
+                        <div class="form-group">
+                            <label>Selecione as versões que deseja gerar:</label>
+                            <div class="checkbox-group">
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="documentVersions" value="technical" checked>
+                                    <span>Versão Técnica</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="documentVersions" value="business">
+                                    <span>Versão de Negócios</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="documentVersions" value="legal">
+                                    <span>Versão Jurídica</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section" id="teamMembers">
+                        <h3><i class="fas fa-users"></i> Integrantes da Equipe</h3>
+                        <div class="form-group">
+                            <label>Adicione os integrantes responsáveis:</label>
+                            <div class="team-list">
+                                <div class="team-item">
+                                    <input type="text" name="teamName[]" placeholder="Nome completo" required>
+                                    <input type="text" name="teamRole[]" placeholder="Cargo/Função" required>
+                                    <input type="email" name="teamEmail[]" placeholder="E-mail" required>
+                                    <button type="button" class="remove-team-member" style="display: none;">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <button type="button" class="add-team-member-btn">
+                                <i class="fas fa-plus"></i> Adicionar Integrante
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-section" id="responsiblePerson">
+                        <h3><i class="fas fa-user-tie"></i> Responsável Legal</h3>
+                        <div class="form-group">
+                            <label for="responsibleName">Nome do Responsável *</label>
+                            <input type="text" id="responsibleName" name="responsibleName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="responsibleRole">Cargo *</label>
+                            <input type="text" id="responsibleRole" name="responsibleRole" required placeholder="Ex: Diretor, Gerente, CEO">
+                        </div>
+                        <div class="form-group">
+                            <label for="responsibleCPF">CPF *</label>
+                            <input type="text" id="responsibleCPF" name="responsibleCPF" required placeholder="000.000.000-00">
+                        </div>
+                        <div class="form-group">
+                            <label for="responsibleEmail">E-mail *</label>
+                            <input type="email" id="responsibleEmail" name="responsibleEmail" required>
+                        </div>
+                    </div>
+
+                    <div class="form-section" id="signatures">
+                        <h3><i class="fas fa-signature"></i> Assinaturas Digitais</h3>
+                        <div class="form-group">
+                            <label>Tipo de Assinatura:</label>
+                            <div class="radio-group">
+                                <label class="radio-item">
+                                    <input type="radio" name="signatureType" value="digital" checked>
+                                    <span>Assinatura Digital (Padrão)</span>
+                                </label>
+                                <label class="radio-item">
+                                    <input type="radio" name="signatureType" value="manual">
+                                    <span>Assinatura Manual (Para Impressão)</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="signatureDate">Data da Assinatura *</label>
+                            <input type="date" id="signatureDate" name="signatureDate" required>
+                        </div>
+                    </div>
+
+                    <div class="form-section" id="documentContent">
+                        <h3><i class="fas fa-file-alt"></i> Conteúdo do Documento</h3>
+                        <div class="form-group">
+                            <label for="documentTitle">Título do Documento *</label>
+                            <input type="text" id="documentTitle" name="documentTitle" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="documentPurpose">Finalidade *</label>
+                            <textarea id="documentPurpose" name="documentPurpose" rows="4" required
+                                placeholder="Descreva a finalidade principal deste documento"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="documentScope">Escopo *</label>
+                            <textarea id="documentScope" name="documentScope" rows="4" required
+                                placeholder="Descreva o escopo e abrangência do documento"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="documentTerms">Termos e Condições</label>
+                            <textarea id="documentTerms" name="documentTerms" rows="6"
+                                placeholder="Termos específicos, condições, políticas internas, etc."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-file-pdf"></i> Gerar Documentação Empresarial
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div id="documentationOutput" class="documentation-output" style="display: none;">
+                <div class="output-header">
+                    <h2>Sua Documentação</h2>
+                    <div class="output-actions">
+                        <button id="downloadBtn" class="btn btn-secondary">
+                            <i class="fas fa-file-pdf"></i> Baixar PDF
+                        </button>
+                        <button id="copyBtn" class="btn btn-secondary">
+                            <i class="fas fa-copy"></i> Copiar
+                        </button>
+                        <button id="newDocBtn" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Nova Documentação
+                        </button>
+                    </div>
+                </div>
+                <div id="documentationContent" class="documentation-content"></div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 DocGen - Gerador de Documentação. Criado com ❤️ para desenvolvedores.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
